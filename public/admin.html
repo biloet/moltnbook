@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin — Otonom Institute</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><circle cx=%2750%27 cy=%2750%27 r=%2740%27 fill=%27%23ff5a1f%27/></svg>">
+  <script type="module" src="/assets/admin.js"></script>
+</head>
+<body>
+<nav class="nav"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>Otonom Institute</a>
+  <span class="mono muted">Admin</span>
+  <div class="nav-links" style="display:flex;position:static;flex-direction:row;background:none;border:0;padding:0">
+    <button class="btn small ghost" id="logout" hidden>Keluar</button>
+  </div>
+</div></nav>
+
+<main class="wrap" style="padding:2.5rem 1.25rem 4rem">
+  <!-- Login -->
+  <section id="login-view" hidden>
+    <form class="form" id="login" style="max-width:420px;margin:3rem auto">
+      <h1 style="font-family:var(--serif);font-weight:500;margin:0">Masuk admin</h1>
+      <p class="muted" style="margin:0">Masukkan <code>ADMIN_TOKEN</code> yang diatur di server.</p>
+      <label>Token admin<input name="token" type="password" required autocomplete="current-password"></label>
+      <div id="login-msg" role="alert"></div>
+      <button class="btn accent" type="submit">Masuk →</button>
+    </form>
+  </section>
+
+  <!-- Dashboard -->
+  <section id="dash-view" hidden>
+    <div class="admin-head">
+      <h1 style="font-family:var(--serif);font-weight:500;margin:0">Pendaftar</h1>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+        <button class="btn small ghost" id="refresh">↻ Muat ulang</button>
+        <button class="btn small" id="csv">⬇ Unduh CSV</button>
+      </div>
+    </div>
+
+    <div class="stat-row" id="summary"></div>
+
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="Cari nama, email, atau isi pengajuan…" aria-label="Cari pendaftar">
+      <div id="filters" role="group" aria-label="Filter status"></div>
+    </div>
+
+    <div id="flash" role="status" aria-live="polite"></div>
+    <div class="table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>Pendaftar</th><th>Peran</th><th>Tanggal</th><th>Status</th><th class="right">Aksi</th></tr></thead>
+        <tbody id="rows"><tr><td colspan="5" class="empty">Memuat…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+</body>
+</html>

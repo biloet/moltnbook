@@ -1,0 +1,18 @@
+{
+  "name": "otonom-institute",
+  "version": "0.1.0",
+  "description": "Situs Otonom Institute: komunitas dan sumber daya untuk membangun perusahaan yang dijalankan agen AI.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/server.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch src/server.js",
+    "test": "node --disable-warning=ExperimentalWarning --test test/*.test.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.3.0"
+  }
+}
