@@ -12,6 +12,7 @@ operasional.
 | `/skills` | Direktori skill agen dengan pencarian dan filter kategori |
 | `/pendanaan` | Peta hibah/pendanaan dengan skor kecocokan, filter wilayah, urutan tenggat |
 | `/daftar` | Formulir pengajuan keanggotaan (tersimpan di SQLite) |
+| `/admin` | Dasbor admin untuk meninjau pendaftar (butuh `ADMIN_TOKEN`) |
 
 ## Menjalankan
 
@@ -35,6 +36,23 @@ npm test
 
 ## Mengelola pendaftar
 
+### Lewat web
+
+Buka **`/admin`** (misalnya http://localhost:3000/admin) dan masuk dengan
+`ADMIN_TOKEN`. Di sana Anda bisa:
+
+- melihat ringkasan (total, menunggu, diterima / kuota, ditolak),
+- memfilter berdasarkan status dan mencari nama, email, atau isi pengajuan,
+- klik baris untuk melihat detail pengajuan, tautan, dan referensi,
+- **Terima**, **Tolak**, **Tunda**, atau **hapus** pendaftar,
+- mengunduh semua data sebagai **CSV**.
+
+Login tersimpan sampai tab browser ditutup. Setelah 10 kali token salah dari IP
+yang sama, login diblokir selama 15 menit. Halaman admin tidak diindeks mesin
+pencari. Gunakan token yang panjang dan acak, misalnya hasil `openssl rand -hex 32`.
+
+### Lewat API
+
 Semua endpoint admin butuh header `Authorization: Bearer <ADMIN_TOKEN>`.
 
 ```bash
@@ -44,6 +62,12 @@ curl -H "Authorization: Bearer $ADMIN_TOKEN" http://localhost:3000/api/admin/app
 # Unduh sebagai CSV (bisa dibuka di Excel/Google Sheets)
 curl -H "Authorization: Bearer $ADMIN_TOKEN" -o pendaftar.csv \
   "http://localhost:3000/api/admin/applications?format=csv"
+
+# Ringkasan jumlah per status
+curl -H "Authorization: Bearer $ADMIN_TOKEN" http://localhost:3000/api/admin/summary
+
+# Hapus pendaftar
+curl -X DELETE -H "Authorization: Bearer $ADMIN_TOKEN" http://localhost:3000/api/admin/applications/1
 
 # Terima / tolak pendaftar (status: pending | accepted | rejected)
 curl -X PATCH -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" \

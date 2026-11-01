@@ -58,3 +58,26 @@ test('rate limit pendaftaran', async () => {
   assert.equal((await send('b@x.id')).status, 429);
   s.close();
 });
+
+test('admin: halaman, summary, hapus, batas percobaan login', async () => {
+  const page = await fetch(base + '/admin');
+  assert.equal(page.status, 200);
+  assert.match(page.headers.get('x-robots-tag'), /noindex/);
+
+  const s = createApp({ db: openDb(':memory:'), adminToken: 'kunci', applyLimitPerHour: 0 }).listen(0);
+  await new Promise((r) => s.once('listening', r));
+  const u = `http://127.0.0.1:${s.address().port}`;
+  const auth = { Authorization: 'Bearer kunci' };
+  await fetch(`${u}/api/apply`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(valid) });
+
+  const sum = await (await fetch(`${u}/api/admin/summary`, { headers: auth })).json();
+  assert.deepEqual(sum, { pending: 1, accepted: 0, rejected: 0, total: 1, member_cap: 500 });
+  assert.equal((await fetch(`${u}/api/admin/applications/1`, { method: 'DELETE', headers: auth })).status, 200);
+  assert.equal((await fetch(`${u}/api/admin/applications/1`, { method: 'DELETE', headers: auth })).status, 404);
+
+  for (let i = 0; i < 10; i++) {
+    assert.equal((await fetch(`${u}/api/admin/summary`, { headers: { Authorization: 'Bearer salah' } })).status, 401);
+  }
+  assert.equal((await fetch(`${u}/api/admin/summary`, { headers: auth })).status, 429, 'diblokir setelah 10 kali gagal');
+  s.close();
+});

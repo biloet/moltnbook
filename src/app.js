@@ -75,6 +75,9 @@ export function createApp(overrides = {}) {
   const config = { ...defaultConfig(), ...overrides };
   const db = overrides.db || openDb(config.dbPath);
   const hits = new Map();
+  const authFails = new Map(); // ip -> [timestamps] percobaan token admin yang salah
+  const AUTH_FAIL_LIMIT = 10;
+  const AUTH_FAIL_WINDOW = 15 * 60_000;
 
   const app = express();
   app.disable('x-powered-by');
@@ -130,12 +133,37 @@ export function createApp(overrides = {}) {
   });
 
   // ----- admin -----
-  function requireAdmin(req, _res, next) {
-    const m = (req.get('authorization') || '').match(/^Bearer\s+(\S+)$/i);
+  function requireAdmin(req, res, next) {
+    res.set('Cache-Control', 'no-store');
     if (!config.adminToken) throw new HttpError(503, 'ADMIN_TOKEN belum diatur di server');
-    if (!m || !sameToken(m[1], config.adminToken)) throw new HttpError(401, 'Token admin salah');
+    const ip = req.ip || 'unknown';
+    const cutoff = Date.now() - AUTH_FAIL_WINDOW;
+    const fails = (authFails.get(ip) || []).filter((t) => t > cutoff);
+    if (fails.length >= AUTH_FAIL_LIMIT) {
+      throw new HttpError(429, 'Terlalu banyak percobaan login gagal. Coba lagi dalam 15 menit.');
+    }
+    const m = (req.get('authorization') || '').match(/^Bearer\s+(\S+)$/i);
+    if (!m || !sameToken(m[1], config.adminToken)) {
+      fails.push(Date.now());
+      authFails.set(ip, fails);
+      throw new HttpError(401, 'Token admin salah');
+    }
+    authFails.delete(ip);
     next();
   }
+
+  app.get('/api/admin/summary', requireAdmin, (_req, res) => {
+    const rows = db.prepare('SELECT status, COUNT(*) AS n FROM applications GROUP BY status').all();
+    const counts = { pending: 0, accepted: 0, rejected: 0 };
+    for (const r of rows) counts[r.status] = r.n;
+    res.json({ ...counts, total: counts.pending + counts.accepted + counts.rejected, member_cap: config.memberCap });
+  });
+
+  app.delete('/api/admin/applications/:id', requireAdmin, (req, res) => {
+    const info = db.prepare('DELETE FROM applications WHERE id = ?').run(Number(req.params.id));
+    if (!info.changes) throw new HttpError(404, 'Pendaftar tidak ditemukan');
+    res.json({ ok: true });
+  });
 
   app.get('/api/admin/applications', requireAdmin, (req, res) => {
     const rows = db.prepare('SELECT * FROM applications ORDER BY id DESC').all().map((r) => ({ ...r }));
@@ -154,6 +182,12 @@ export function createApp(overrides = {}) {
     const info = db.prepare('UPDATE applications SET status = ? WHERE id = ?').run(status, Number(req.params.id));
     if (!info.changes) throw new HttpError(404, 'Pendaftar tidak ditemukan');
     res.json({ ok: true, id: Number(req.params.id), status });
+  });
+
+  app.use('/admin', (_req, res, next) => {
+    res.set('X-Robots-Tag', 'noindex, nofollow');
+    res.set('Cache-Control', 'no-store');
+    next();
   });
 
   app.use('/api', (_req, _res, next) => next(new HttpError(404, 'Endpoint tidak ditemukan')));
