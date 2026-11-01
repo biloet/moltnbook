@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <title>Ajukan Keanggotaan — Otonom Institute</title>
+  <meta name="description" content="Ajukan keanggotaan di komunitas Otonom Institute.">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><circle cx=%2750%27 cy=%2750%27 r=%2740%27 fill=%27%23ff5a1f%27/></svg>">
+  <script type="module" src="/assets/site.js"></script>
+  <script type="module" src="/assets/daftar.js"></script>
+</head>
+<body>
+<nav class="nav" data-nav></nav>
+<header class="page-head"><div class="wrap">
+  <span class="mono muted">Keanggotaan</span>
+  <h1>Ajukan keanggotaan</h1>
+  <p>Komunitas ini khusus praktisi dan jumlah anggotanya dibatasi. Ceritakan apa yang sedang Anda bangun; kami meninjau setiap pengajuan secara manual.</p>
+</div></header>
+<main class="wrap" style="padding:2.5rem 1.25rem 4rem">
+  <div class="split">
+    <form class="form" id="apply" novalidate>
+      <div class="row">
+        <label>Nama lengkap<input name="name" required maxlength="100" autocomplete="name"></label>
+        <label>Email<input name="email" type="email" required maxlength="200" autocomplete="email"></label>
+      </div>
+      <label>Peran Anda
+        <select name="role" required>
+          <option value="">Pilih…</option>
+          <option value="founder">Founder</option>
+          <option value="engineer">Engineer</option>
+          <option value="operator">Operator</option>
+          <option value="investor">Investor</option>
+          <option value="researcher">Peneliti</option>
+          <option value="lainnya">Lainnya</option>
+        </select>
+      </label>
+      <label>Apa yang sedang Anda bangun? <small>Minimal 20 karakter. Ceritakan bisnisnya dan bagian mana yang dijalankan agen.</small>
+        <textarea name="building" required minlength="20" maxlength="2000"></textarea>
+      </label>
+      <label>Tautan <small>Opsional: situs, GitHub, LinkedIn, atau demo.</small><input name="link" type="url" maxlength="500" placeholder="https://"></label>
+      <label>Kode referensi <small>Opsional: nama atau kode anggota yang merekomendasikan Anda.</small><input name="referral" maxlength="100"></label>
+      <div class="hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
+      <div id="msg" role="status" aria-live="polite"></div>
+      <button class="btn accent" type="submit">Kirim pengajuan →</button>
+    </form>
+    <div>
+      <h2 style="font-family:var(--serif);font-weight:500;margin-top:0">Apa yang terjadi setelah ini?</h2>
+      <ul class="check">
+        <li>Tim kami meninjau pengajuan Anda, biasanya dalam 1–2 minggu.</li>
+        <li>Jika cocok, Anda menerima undangan lewat email beserta akses ke forum anggota.</li>
+        <li>Jika kuota penuh, Anda masuk daftar tunggu dan dihubungi saat ada kursi kosong.</li>
+      </ul>
+      <p class="muted" style="font-size:.9rem;margin-top:1.5rem">Data Anda hanya dipakai untuk meninjau pengajuan dan tidak dibagikan ke pihak lain.</p>
+    </div>
+  </div>
+</main>
+<footer class="site" data-footer></footer>
+</body>
+</html>
