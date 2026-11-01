@@ -1,0 +1,19 @@
+# Blueprint Render: https://render.com/docs/blueprint-spec
+# Persistent disk butuh paket berbayar (Starter ke atas).
+services:
+  - type: web
+    name: otonom-institute
+    runtime: docker
+    plan: starter
+    healthCheckPath: /healthz
+    envVars:
+      - key: ADMIN_TOKEN
+        generateValue: true   # Render membuat token acak; lihat nilainya di tab Environment
+      - key: TRUST_PROXY
+        value: "1"
+      - key: DB_PATH
+        value: /data/otonom.db
+    disk:
+      name: otonom-data
+      mountPath: /data
+      sizeGB: 1

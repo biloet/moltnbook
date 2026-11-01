@@ -89,5 +89,6 @@ Pendaftar yang diterima (`accepted`) mengurangi angka "Kursi tersisa" di beranda
 
 ## Deploy
 
-Tersedia `Dockerfile`. Pasang volume permanen ke `/data` agar data pendaftar
-tidak hilang saat redeploy, lalu atur `ADMIN_TOKEN` dan `TRUST_PROXY=1`.
+Lihat [`DEPLOY.md`](DEPLOY.md) untuk panduan Railway, Render, Fly.io, dan VPS.
+Repo ini sudah berisi `Dockerfile`, `railway.json`, `render.yaml`, dan `fly.toml`.
+Intinya: pasang volume permanen ke `/data`, lalu atur `ADMIN_TOKEN` dan `TRUST_PROXY=1`.
